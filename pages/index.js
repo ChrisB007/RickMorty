@@ -1,69 +1,8 @@
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-const ResData = (props) => {
-  const { residents } = props;
-  const [residentsFullData, setResidentsFullData] = useState(null);
-
-  async function fetchAllResidentsData() {
-    const allResidentsIds = residents.map((resident) => {
-      return resident.split('/')[5];
-    });
-
-    const string = allResidentsIds.join(',');
-
-    // We shouldn't send a request for 0 residents
-    if (allResidentsIds.length === 0) {
-      setResidentsFullData([]);
-    } else {
-      const characterReq = await fetch(
-        `${baseUrl}/character/${allResidentsIds.join(',')}`,
-      );
-      const allCharactersData = await characterReq.json();
-
-      if (Array.isArray(allCharactersData)) {
-        // If requesting multiple characters the data array
-        setResidentsFullData(allCharactersData);
-      } else {
-        // If requesting only one character the data returned from the server is not an array
-        setResidentsFullData([allCharactersData]);
-      }
-    }
-  }
-
-  useEffect(() => {
-    fetchAllResidentsData();
-  }, []);
-
-  return (
-    <ul>
-      {residentsFullData ? (
-        residentsFullData.map((data) => {
-          const { id, name, image, status } = data;
-          return (
-            <Link href={`/resident/${id}`} key={id}>
-              <a>
-                <li className="m-auto border p-2 m-2 rounded" key={id}>
-                  <img className="m-auto" src={image} alt={name} />
-                  <h3 className="flex justify-center">{name}</h3>
-                  <p className="flex justify-center">{status}</p>
-                </li>
-              </a>
-            </Link>
-          );
-        })
-      ) : (
-        <>Loading...</>
-      )}
-    </ul>
-  );
-};
-
-export default function NickandMorty({ locJson }) {
-  const { results } = locJson;
-  const [locations, setLocations] = useState(results);
-
+export default function Locations({ locData }) {
+  const { results } = locData;
   return (
     <>
       <Head>
@@ -77,33 +16,65 @@ export default function NickandMorty({ locJson }) {
           </h1>
         </div>
       </div>
-      <div>
-        <ul className="grid grid-cols-3 gap-4 m-auto w-3/4 pt-16 pb-16 ">
-          {locations.map((loc) => {
-            const { id, name, type, residents } = loc;
-            return (
-              <>
-                <span key={id} className=" p-3">
-                  <li className="flex justify-center">Planet Name: {name} </li>
-                  <li className="flex justify-center">Planet Type:{type}</li>
-                  <ResData className="h-auto" residents={residents} />
-                </span>
-              </>
-            );
-          })}
-        </ul>
-      </div>
+      <ul
+        role="list"
+        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-6"
+      >
+        {results.map((result) => (
+          <li
+            key={result.id}
+            className="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200"
+          >
+            <div className="flex-1 flex flex-col p-8">
+              <Link href={`/location/${result.id}`}>
+                <a>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-32 w-32 mx-auto rounded-full"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <h3 className="mt-6 text-gray-900 text-sm font-medium">
+                    {result.name}
+                  </h3>
+                  <dl className="mt-1 flex-grow flex flex-col justify-between">
+                    <dt className="sr-only">Title</dt>
+                    <dd className="text-gray-500 text-sm">{result.title}</dd>
+                    <dt className="sr-only">Role</dt>
+                    <dd className="mt-3">
+                      <span className="px-2 py-1 text-gray-800 text-xs font-medium bg-gray-100 rounded-full">
+                        {result.type}
+                      </span>
+                    </dd>
+                  </dl>
+                </a>
+              </Link>
+            </div>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
 
 const baseUrl = 'https://rickandmortyapi.com/api';
 
-export async function getServerSideProps() {
-  const locChar = await fetch(`${baseUrl}/location`);
+export async function getServerSideProps({ query }) {
+  const { id } = query;
+  const locChar = await fetch(`${baseUrl}/location/${id}`);
   const locJson = await locChar.json();
+  const location = await fetch(`${baseUrl}/location`);
+  const locData = await location.json();
 
   return {
-    props: { locJson },
+    props: { locJson, locData },
   };
 }

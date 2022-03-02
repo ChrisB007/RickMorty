@@ -4,6 +4,7 @@ import Link from 'next/link';
 export default function NickandMorty({ CharJson }) {
   console.log(CharJson);
   const { name, image, status, species, origin, location, gender } = CharJson;
+  console.log(origin);
 
   const handleSubmit = (event) => {
     event.preventDefault();
