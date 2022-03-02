@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const ResData = (props) => {
   const { residents } = props;
@@ -22,10 +23,10 @@ const ResData = (props) => {
       const allCharactersData = await characterReq.json();
 
       if (Array.isArray(allCharactersData)) {
-        // If we requested multiple characters the data is an array
+        // If requesting multiple characters the data array
         setResidentsFullData(allCharactersData);
       } else {
-        // If we requested only one character the data returned from the server is not an array
+        // If requesting only one character the data returned from the server is not an array
         setResidentsFullData([allCharactersData]);
       }
     }
@@ -34,18 +35,22 @@ const ResData = (props) => {
   useEffect(() => {
     fetchAllResidentsData();
   }, []);
+
   return (
     <ul>
       {residentsFullData ? (
         residentsFullData.map((data) => {
-          console.log('data', data);
           const { id, name, image, status } = data;
           return (
-            <li className="m-auto border p-2 m-2 rounded" key={id}>
-              <img className="m-auto" src={image} alt={name} />
-              <h3 className="flex justify-center">{name}</h3>
-              <p className="flex justify-center">{status}</p>
-            </li>
+            <Link href={`/resident/${id}`} key={id}>
+              <a>
+                <li className="m-auto border p-2 m-2 rounded" key={id}>
+                  <img className="m-auto" src={image} alt={name} />
+                  <h3 className="flex justify-center">{name}</h3>
+                  <p className="flex justify-center">{status}</p>
+                </li>
+              </a>
+            </Link>
           );
         })
       ) : (
@@ -55,7 +60,7 @@ const ResData = (props) => {
   );
 };
 
-export default function NickandMorty({ locJson, baseUrl }) {
+export default function NickandMorty({ locJson }) {
   const { results } = locJson;
   const [locations, setLocations] = useState(results);
 
@@ -78,10 +83,10 @@ export default function NickandMorty({ locJson, baseUrl }) {
             const { id, name, type, residents } = loc;
             return (
               <>
-                <span key={id} className="border-2 p-3">
+                <span key={id} className=" p-3">
                   <li className="flex justify-center">Planet Name: {name} </li>
                   <li className="flex justify-center">Planet Type:{type}</li>
-                  <ResData residents={residents} />
+                  <ResData className="h-auto" residents={residents} />
                 </span>
               </>
             );
@@ -94,11 +99,11 @@ export default function NickandMorty({ locJson, baseUrl }) {
 
 const baseUrl = 'https://rickandmortyapi.com/api';
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   const locChar = await fetch(`${baseUrl}/location`);
   const locJson = await locChar.json();
 
   return {
-    props: { locJson, baseUrl },
+    props: { locJson },
   };
 }
