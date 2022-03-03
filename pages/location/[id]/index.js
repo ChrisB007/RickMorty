@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const ResData = (props) => {
-  const { residents, locUrl } = props;
+  const { residents } = props;
   const [residentsFullData, setResidentsFullData] = useState(null);
 
   async function fetchAllResidentsData() {
@@ -50,7 +50,6 @@ const ResData = (props) => {
                   <img className="m-auto" src={image} alt={name} />
                   <h3 className="flex justify-center">{name}</h3>
                   <p className="flex justify-center">{status}</p>
-                  <p className="flex justify-center">{url}</p>
                 </li>
               </a>
             </Link>
@@ -63,14 +62,15 @@ const ResData = (props) => {
   );
 };
 
-export default function Locations({ locationData, id }) {
+export default function Locations({ locationData, locationByIdData }) {
   const { results } = locationData;
-
   const [locations, setLocations] = useState(results);
+  const [locationId, setLocationId] = useState([locationByIdData]);
+
   return (
     <>
       <Head>
-        <title>Nick and Morty</title>
+        <title>Rick and Morty</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex justify-center ">
@@ -78,37 +78,43 @@ export default function Locations({ locationData, id }) {
           <a>
             <div>
               <h1 className="flex justify-center text-center text-7xl font-extrabold mt-3">
-                Nick and Morty
+                Rick and Morty
               </h1>
             </div>
           </a>
         </Link>
       </div>
-      <ul
-        role="list"
-        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-6"
-      >
-        {locations.map((result) => {
-          const { id, url, name, residents } = result;
-          return (
-            <>
-              <li
-                key={id}
-                className="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200"
-              >
-                <div className="flex-1 flex flex-col p-8">
-                  {name}
-                  <ResData
-                    className="h-auto"
-                    residents={residents}
-                    locUrl={url}
-                  />
-                </div>
-              </li>
-            </>
-          );
-        })}
-      </ul>
+      <div>
+        <ul
+          role="list"
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+        >
+          {locationId.map((result) => (
+            <li
+              key={result.id}
+              className="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200"
+            >
+              <div className="flex-1 flex flex-col p-8">
+                <dl className="mt-1 flex-grow flex flex-col justify-between">
+                  <dd className="mt-3">
+                    <span className="px-2 py-1 text-green-800 text-xs font-medium bg-green-100 rounded-full">
+                      {result.name}
+                    </span>
+                  </dd>
+                  <dt className="sr-only">Residents</dt>
+                  <dd className="text-gray-500 text-sm">
+                    <ResData
+                      className="flex flex-row"
+                      residents={result.residents}
+                    />
+                  </dd>
+                  <dt className="sr-only">Type</dt>
+                </dl>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </>
   );
 }
@@ -121,8 +127,10 @@ export async function getServerSideProps({ query }) {
   const characterData = await characters.json();
   const locations = await fetch(`${baseUrl}/location`);
   const locationData = await locations.json();
+  const locationById = await fetch(`${baseUrl}/location/${id}`);
+  const locationByIdData = await locationById.json();
 
   return {
-    props: { locationData, characterData, id },
+    props: { locationData, characterData, locationByIdData },
   };
 }
