@@ -97,6 +97,7 @@ export default function Locations({ locationData, id }) {
                 className="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200"
               >
                 <div className="flex-1 flex flex-col p-8">
+                  {name}
                   <ResData
                     className="h-auto"
                     residents={residents}
