@@ -1,14 +1,22 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function NickandMorty({ CharJson }) {
-  console.log(CharJson);
-  const { name, image, status, species, origin, location, gender } = CharJson;
-  console.log(origin);
+  const { name, image, status, species, location, gender } = CharJson;
+  const [userNote, setUsernote] = useState('');
+  const [notes, setNotes] = useState([]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Got submitted');
+    const res = await fetch('/api/notes', {
+      method: 'POST',
+      body: JSON.stringify({ userNote }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json();
   };
 
   return (
@@ -34,22 +42,22 @@ export default function NickandMorty({ CharJson }) {
         <h3 className="flex justify-center">Name: {name}</h3>
         <p className="flex justify-center">Status: {status}</p>
         <p className="flex justify-center">Species: {species}</p>
-        <p className="flex justify-center">Origin: {origin.name}</p>
         <p className="flex justify-center">Location: {location.name}</p>
         <p className="flex justify-center"> Gender: {gender} </p>
       </div>
       <form onSubmit={handleSubmit} className="relative w-2/5 m-auto pt-3">
         <div className="border border-gray-300 rounded-lg shadow-sm overflow-hidden focus-within:border-gray-500 focus-within:ring-1 focus-within:ring-gray-500">
-          <label htmlFor="comment" className="sr-only">
+          <label htmlFor="notes" className="sr-only">
             Add your note about this character
           </label>
           <textarea
             rows={3}
-            name="comment"
-            id="comment"
+            name="notes"
+            value={userNote}
+            onChange={(e) => setUsernote(e.target.value)}
+            id="notes"
             className="block w-full py-3 border-0 resize-none focus:ring-0 sm:text-sm p-4"
             placeholder="Add your note about this character..."
-            defaultValue={''}
           />
         </div>
         <div className="flex justify-end">

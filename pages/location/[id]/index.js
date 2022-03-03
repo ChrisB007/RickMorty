@@ -7,11 +7,12 @@ const ResData = (props) => {
   const [residentsFullData, setResidentsFullData] = useState(null);
 
   async function fetchAllResidentsData() {
+    // Getting all residents ID's
     const allResidentsIds = residents.map((resident) => {
       return resident.split('/')[5];
     });
 
-    // We shouldn't send a request for 0 residents
+    // Shouldn't send a request for 0 residents
     if (allResidentsIds.length === 0) {
       setResidentsFullData([]);
     } else {
@@ -23,14 +24,10 @@ const ResData = (props) => {
 
       // If characters data is an array
       if (Array.isArray(allCharactersData)) {
-        // Filter through allCharactersData array
-        allCharactersData.filter((character) => {
-          const { url } = character.location;
-          //     If character's location.url is EQUAL to the url of the current location
-          url === locUrl ? setResidentsFullData(allCharactersData) : null;
-        });
+        // If character's location.url is EQUAL to the url of the current location push character to residentsFullData array
+        setResidentsFullData(allCharactersData);
       } else {
-        // If requesting only one character the data returned from the server is not an array
+        // If requesting only one character and the data returned from the server is not an array
         setResidentsFullData([allCharactersData]);
       }
     }
@@ -45,6 +42,7 @@ const ResData = (props) => {
       {residentsFullData ? (
         residentsFullData.map((data) => {
           const { id, name, image, status } = data;
+          const { url } = data.location;
           return (
             <Link href={`/resident/${id}`} key={id}>
               <a>
@@ -52,6 +50,7 @@ const ResData = (props) => {
                   <img className="m-auto" src={image} alt={name} />
                   <h3 className="flex justify-center">{name}</h3>
                   <p className="flex justify-center">{status}</p>
+                  <p className="flex justify-center">{url}</p>
                 </li>
               </a>
             </Link>
@@ -64,7 +63,7 @@ const ResData = (props) => {
   );
 };
 
-export default function Locations({ locationData }) {
+export default function Locations({ locationData, id }) {
   const { results } = locationData;
 
   const [locations, setLocations] = useState(results);
@@ -75,11 +74,15 @@ export default function Locations({ locationData }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex justify-center ">
-        <div>
-          <h1 className="flex justify-center text-center text-7xl font-extrabold mt-3">
-            Nick and Morty
-          </h1>
-        </div>
+        <Link href={`/`}>
+          <a>
+            <div>
+              <h1 className="flex justify-center text-center text-7xl font-extrabold mt-3">
+                Nick and Morty
+              </h1>
+            </div>
+          </a>
+        </Link>
       </div>
       <ul
         role="list"
@@ -94,7 +97,6 @@ export default function Locations({ locationData }) {
                 className="col-span-1 flex flex-col text-center bg-white rounded-lg shadow divide-y divide-gray-200"
               >
                 <div className="flex-1 flex flex-col p-8">
-                  <h3>{name}</h3>
                   <ResData
                     className="h-auto"
                     residents={residents}
@@ -114,14 +116,12 @@ const baseUrl = 'https://rickandmortyapi.com/api';
 
 export async function getServerSideProps({ query }) {
   const { id } = query;
-  const singleChar = await fetch(`${baseUrl}/character/${id}`);
-  const characterJson = await singleChar.json();
   const characters = await fetch(`${baseUrl}/character`);
   const characterData = await characters.json();
   const locations = await fetch(`${baseUrl}/location`);
   const locationData = await locations.json();
 
   return {
-    props: { locationData, characterData },
+    props: { locationData, characterData, id },
   };
 }
