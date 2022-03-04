@@ -66,9 +66,7 @@ const ResData = (props) => {
   );
 };
 
-export default function Locations({ locationData, locationByIdData }) {
-  const { results } = locationData;
-  const [locations, setLocations] = useState(results);
+export default function Locations({ locationByIdData }) {
   const [locationId, setLocationId] = useState([locationByIdData]);
 
   return (
@@ -88,7 +86,7 @@ export default function Locations({ locationData, locationByIdData }) {
           </a>
         </Link>
       </div>
-      <div className="grid grid-cols-4">
+      <div className="flex flex-row">
         {locationId.map((result) => (
           <ResData key={result.id} residents={result.residents} />
         ))}
