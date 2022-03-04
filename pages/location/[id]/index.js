@@ -38,7 +38,7 @@ const ResData = (props) => {
   }, []);
 
   return (
-    <ul>
+    <ul className="flex flex-row flex-wrap">
       {residentsFullData ? (
         residentsFullData.map((data) => {
           const { id, name, image, status } = data;

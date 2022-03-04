@@ -1,5 +1,15 @@
 ## Rick and Morty
 
+This app is based on Rick and Morty API (https://rickandmortyapi.com/)
+It can be viewed at: https://rick-morty-five-pi.vercel.app/
+
+## TechStack
+
+NextJS
+TailwindCSS
+
+## Development
+
 To run the development server:
 
 ```bash

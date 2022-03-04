@@ -5,7 +5,6 @@ import { useState } from 'react';
 export default function NickandMorty({ CharJson }) {
   const { name, image, status, species, location, gender } = CharJson;
   const [userNote, setUsernote] = useState('');
-  const [notes, setNotes] = useState([]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -16,7 +15,6 @@ export default function NickandMorty({ CharJson }) {
         'Content-Type': 'application/json',
       },
     });
-    const data = await res.json();
   };
 
   return (
