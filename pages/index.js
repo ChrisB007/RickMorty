@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 export default function Locations({ locData }) {
   const { results } = locData;
+  console.log(results);
   return (
     <>
       <Head>
