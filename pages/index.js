@@ -3,17 +3,16 @@ import Link from 'next/link';
 
 export default function Locations({ locData }) {
   const { results } = locData;
-  console.log(results);
   return (
     <>
       <Head>
-        <title>Nick and Morty</title>
+        <title>Rick and Morty</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex justify-center ">
         <div>
           <h1 className="flex justify-center text-center text-7xl font-extrabold mt-3">
-            Nick and Morty
+            Rick and Morty
           </h1>
         </div>
       </div>
