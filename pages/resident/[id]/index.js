@@ -20,7 +20,7 @@ export default function NickandMorty({ CharJson }) {
   return (
     <>
       <Head>
-        <title>Nick and Morty</title>
+        <title>Rick and Morty</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex justify-center ">
@@ -28,7 +28,7 @@ export default function NickandMorty({ CharJson }) {
           <Link href={`/`}>
             <a>
               <h1 className="flex justify-center text-center text-7xl font-extrabold mt-3">
-                Nick and Morty
+                Rick and Morty
               </h1>
             </a>
           </Link>
