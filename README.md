@@ -3,6 +3,8 @@
 This app is based on Rick and Morty API (https://rickandmortyapi.com/)
 It can be viewed at: https://rick-morty-five-pi.vercel.app/
 
+The App displays each Planet by name, and upon clicking shows all the characters in each planet. Details page shows details about each character once clicked.
+
 ## TechStack
 
 NextJS

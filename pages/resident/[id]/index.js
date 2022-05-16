@@ -8,7 +8,7 @@ export default function NickandMorty({ CharJson }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = await fetch('/api/notes', {
+    await fetch('/api/notes', {
       method: 'POST',
       body: JSON.stringify({ userNote }),
       headers: {
